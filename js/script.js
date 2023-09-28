@@ -67,3 +67,24 @@ activities.addEventListener('change', (event) => {
     } 
 
 })
+
+const paymentMethod = document.querySelector('#payment');
+paymentMethod.addEventListener('change', (event) => {
+
+    //disbaling all payment options 
+    document.querySelector('#credit-card').style.display = "none";
+    document.querySelector('#paypal').style.display = "none";
+    document.querySelector('#bitcoin').style.display = "none";
+
+    //enable payment options slecetd based on id
+    document.querySelector(`#${event.target.value}`).style.display = "block";
+})
+
+
+formSubmit = document.querySelector('form');
+formSubmit.addEventListener('submit', (event) => {
+    event.prevantDefault();
+    
+})
+
+//console.log(formSubmit);
