@@ -172,8 +172,8 @@ const formSubmit = document.querySelector('form');
 formSubmit.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    //step 9 visual validation erros
-    
+    //step 9 visual validation errors
+
     let isValid = true;
 
     if (!validateName()) {
