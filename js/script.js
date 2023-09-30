@@ -22,7 +22,7 @@ jobRole.addEventListener('change', (event) => {
 
 // step 4: hiding the color field
 const color = document.querySelector("#color");
-color.style.display = "none";
+color.disabled = true;
 
 //helper function to hide or show
 const showHideColors = (options, command) => {
@@ -35,19 +35,19 @@ const showHideColors = (options, command) => {
 const design = document.querySelector("#design");
 design.addEventListener('change', (event) => {
     const selected = event.target.value;
-    color.style.display = "block";
+    color.disabled = false;
 
     let hearts = document.querySelectorAll('#color option[data-theme="heart js"]');
     let puns = document.querySelectorAll('#color option[data-theme="js puns"]');
 
     if (selected === "js puns") {
-        showHideColors(hearts, false);
-        showHideColors(puns, true);
+        showHideColors(hearts, true);
+        showHideColors(puns, false);
         puns[0].selected = true;
 
     } else if (selected === "heart js") {
-        showHideColors(puns, false);
-        showHideColors(hearts, true);
+        showHideColors(puns, true);
+        showHideColors(hearts, false);
         hearts[0].selected = true;
     }
 
@@ -78,7 +78,13 @@ activities.addEventListener('change', (event) => {
 //step 6
 //undefined variable
 let selectedPayment;
+
+//disbale when page load
+document.querySelector('#paypal').style.display = "none";
+document.querySelector('#bitcoin').style.display = "none";
+
 const paymentMethod = document.querySelector('#payment');
+paymentMethod.value = 'credit-card';
 paymentMethod.addEventListener('change', (event) => {
 
     //disbaling all payment options 
@@ -117,11 +123,13 @@ const validateEmail = () => {
 }
 
 const validateRegister = () => {
-    //select all inputs beloging to activties box
+    //select all inputs belonging to activties box
     const checkboxes = document.querySelectorAll('#activities-box input');
     for (let i = 0; i < checkboxes.length; i++) {
+
         const input = checkboxes[i];
-        if (input.checked) {
+
+        if (input.checked || totalCost > 0) {
             return true;
         } else {
             return false;
@@ -132,48 +140,36 @@ const validateRegister = () => {
 
 const validateCcNum = () => {
     const ccNumber = document.querySelector('#cc-num').value;
-    if (selectedPayment === 'credit-card') {
-        if ((ccNumber.length >= 13 && ccNumber.length <= 16) && !ccNumber.includes('-') && !ccNumber.includes(' ')) {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
+
+    if ((ccNumber.length >= 13 && ccNumber.length <= 16) && !ccNumber.includes('-') && !ccNumber.includes(' ')) {
         return true;
+    } else {
+        return false;
     }
 }
 const validateZip = () => {
     const zip = document.querySelector('#zip').value;
-    if (selectedPayment === 'credit-card') {
-        if (zip.length === 5) {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
+    if (zip.length === 5) {
         return true;
+    } else {
+        return false;
     }
+
 }
 const validateCvv = () => {
-    const cvv = document.querySelector('#cvv').value;
-    if (selectedPayment === 'credit-card') {
+    const cvv = document.querySelector('#cvv').value; {
         if (cvv.length === 3) {
             return true;
         } else {
             return false;
         }
-    } else {
-        return true;
     }
 }
 
-//submit event listener/handler
-const formSubmit = document.querySelector('form');
-formSubmit.addEventListener('submit', (event) => {
-    event.preventDefault();
 
-    //step 9 visual validation errors
+//step 9 visual validation errors
 
+const validate = () => {
     let isValid = true;
 
     if (!validateName()) {
@@ -181,6 +177,10 @@ formSubmit.addEventListener('submit', (event) => {
         nameField.parentElement.classList.remove('valid');
         nameField.nextElementSibling.style.display = "block";
         isValid = false;
+    } else {
+        nameField.parentElement.classList.remove('not-valid');
+        nameField.parentElement.classList.add('valid');
+        nameField.nextElementSibling.style.display = "none";
     }
     if (!validateEmail()) {
         const email = document.querySelector('#email');
@@ -188,40 +188,80 @@ formSubmit.addEventListener('submit', (event) => {
         email.parentElement.classList.remove('valid');
         email.nextElementSibling.style.display = "block";
         isValid = false;
+    } else {
+        const email = document.querySelector('#email');
+        email.parentElement.classList.remove('not-valid');
+        email.parentElement.classList.add('valid');
+        email.nextElementSibling.style.display = "none";
+
     }
     if (!validateRegister()) {
         activities.classList.add('not-valid');
         activities.classList.remove('valid');
         document.querySelector('#activities .hint').style.display = "block";
         isValid = false;
+    } else {
+        activities.classList.remove('not-valid');
+        activities.classList.add('valid');
+        document.querySelector('#activities .hint').style.display = "none";
+
     }
-    if (!validateCcNum()) {
-        const ccNumber = document.querySelector('#cc-num');
-        ccNumber.parentElement.classList.add('not-valid');
-        ccNumber.parentElement.classList.remove('valid');
-        ccNumber.nextElementSibling.style.display = "block";
-        isValid = false;
+    if (document.querySelector('#payment').value === 'credit-card') {
+        if (!validateCcNum()) {
+            const ccNumber = document.querySelector('#cc-num');
+            ccNumber.parentElement.classList.add('not-valid');
+            ccNumber.parentElement.classList.remove('valid');
+            ccNumber.nextElementSibling.style.display = "block";
+            isValid = false;
+        } else {
+            const ccNumber = document.querySelector('#cc-num');
+            ccNumber.parentElement.classList.remove('not-valid');
+            ccNumber.parentElement.classList.add('valid');
+            ccNumber.nextElementSibling.style.display = "none";
+
+        }
+        if (!validateZip()) {
+            const zip = document.querySelector('#zip');
+            zip.parentElement.classList.add('not-valid');
+            zip.parentElement.classList.remove('valid');
+            zip.nextElementSibling.style.display = "block";
+            isValid = false;
+        } else {
+            const zip = document.querySelector('#zip');
+            zip.parentElement.classList.remove('not-valid');
+            zip.parentElement.classList.add('valid');
+            zip.nextElementSibling.style.display = "none";
+
+        }
+        if (!validateCvv()) {
+            const cvv = document.querySelector('#cvv');
+            cvv.parentElement.classList.add('not-valid');
+            cvv.parentElement.classList.remove('valid');
+            cvv.nextElementSibling.style.display = "block";
+            isValid = false;
+        } else {
+            const cvv = document.querySelector('#cvv');
+            cvv.parentElement.classList.remove('not-valid');
+            cvv.parentElement.classList.add('valid');
+            cvv.nextElementSibling.style.display = "none";
+        }
     }
-    if (!validateZip()) {
-        const zip = document.querySelector('#zip');
-        zip.parentElement.classList.add('not-valid');
-        zip.parentElement.classList.remove('valid');
-        zip.nextElementSibling.style.display = "block";
-        isValid = false;
-    }
-    if (!validateCvv()) {
-        const cvv = document.querySelector('#cvv');
-        cvv.parentElement.classList.add('not-valid');
-        cvv.parentElement.classList.remove('valid');
-        cvv.nextElementSibling.style.display = "block";
-        isValid = false;
-    }
-    if (isValid) {
-        console.log('Form is valid and can submit');
-    }
-});
+    return isValid;
+}
+
+
+
 
 //step 8
+//submit event listener/handler
+const formSubmit = document.querySelector('form');
+formSubmit.addEventListener('submit', (event) => {
+    if (!validate()) {
+        event.preventDefault();
+    }
+    event.preventDefault();
+});
+
 const checkboxes = document.querySelectorAll('#activities-box input');
 for (let i = 0; i < checkboxes.length; i++) {
     const input = checkboxes[i];
