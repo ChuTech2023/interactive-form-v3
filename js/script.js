@@ -140,30 +140,18 @@ const validateRegister = () => {
 
 const validateCcNum = () => {
     const ccNumber = document.querySelector('#cc-num').value;
+    return /^(\d{13,16})$/.test(ccNumber);
+  };
 
-    if ((ccNumber.length >= 13 && ccNumber.length <= 16) && !ccNumber.includes('-') && !ccNumber.includes(' ')) {
-        return true;
-    } else {
-        return false;
-    }
-}
 const validateZip = () => {
     const zip = document.querySelector('#zip').value;
-    if (zip.length === 5) {
-        return true;
-    } else {
-        return false;
-    }
-
-}
+    return /^(\d{5})$/.test(zip);
+  };
+    
 const validateCvv = () => {
     const cvv = document.querySelector('#cvv').value; {
-        if (cvv.length === 3) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+        return /^(\d{3})$/.test(cvv);
+  };
 }
 
 
@@ -259,7 +247,7 @@ formSubmit.addEventListener('submit', (event) => {
     if (!validate()) {
         event.preventDefault();
     }
-    event.preventDefault();
+   // event.preventDefault();
 });
 
 const checkboxes = document.querySelectorAll('#activities-box input');
